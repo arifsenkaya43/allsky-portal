@@ -13,9 +13,16 @@ function DisplayLiveView(){
 
   ?>
   <script>
-        setInterval(function () {
-            getImage();
-        }, <?php echo $camera_settings_array["exposure"] ?>);
+
+        var timeout = <?php echo $camera_settings_array["exposure"]/1000 < 5000 ? 5000 : $camera_settings_array["exposure"]/1000?>
+                
+        function getImageInterval() {
+          getImage(function() {
+            setTimeout(getImageInterval, timeout)
+          })
+        }
+
+        setTimeout(getImageInterval, timeout);
   </script>
 
   <div class="row">

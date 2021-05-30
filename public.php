@@ -43,7 +43,7 @@ body {
 <script src="bower_components/jquery/dist/jquery.min.js"></script>
 
 <script type="text/javascript">
-                function getImage(){
+                function getImage(onEnd){
                         var img = $("<img />").attr('src', 'current/liveview-<?php echo $camera_settings_array["filename"] ?>?_ts=' + new Date().getTime())
 
                                 .attr("id", "current")
@@ -53,7 +53,7 @@ body {
                                     if (!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
                                         console.log('broken image!');
                                         setTimeout(function(){
-                                            getImage();
+                                            getImage(onEnd);
                                         }, 500);
                                     } else {
                                         $("#live_container").empty().append(img);
@@ -61,9 +61,15 @@ body {
                                 });
                 }
 
-                setInterval(function(){
-                        getImage();
-                }, <?php echo $camera_settings_array["exposure"]/1000 < 5000 ? 5000 : $camera_settings_array["exposure"]/1000?>);
+                var timeout = <?php echo $camera_settings_array["exposure"]/1000 < 5000 ? 5000 : $camera_settings_array["exposure"]/1000?>
+                
+                function getImageInterval() {
+                  getImage(function() {
+                    setTimeout(getImageInterval, timeout)
+                  })
+                }
+
+                setTimeout(getImageInterval, timeout);
 
  </script>
 

@@ -146,7 +146,7 @@ $csrf_token = $_SESSION['csrf_token'];
     <script src="js/bigscreen.min.js"></script>
 
     <script type="text/javascript">
-        function getImage() {
+        function getImage(onEnd) {
             var img = $("<img />").attr('src', 'current/liveview-<?php echo $camera_settings_array["filename"] ?>?_ts=' + new Date().getTime())
                 .attr("id", "current")
                 .attr("class", "current")
@@ -155,10 +155,13 @@ $csrf_token = $_SESSION['csrf_token'];
                     if (!this.complete || typeof this.naturalWidth == "undefined" || this.naturalWidth == 0) {
                         console.log('broken image!');
                         setTimeout(function () {
-                            getImage();
+                            getImage(onEnd);
                         }, 500);
                     } else {
                         $("#live_container").empty().append(img);
+                        if (onEnd)  {
+                            onEnd()
+                        }
                     }
                 });
         }
